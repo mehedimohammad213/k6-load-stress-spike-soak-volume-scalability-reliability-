@@ -11,13 +11,15 @@
         "test:volume": "k6 run tests/volume.test.js",
         "test:scalability": "k6 run tests/scalability.test.js",
         "test:reliability": "k6 run tests/reliability.test.js",
-        "test:all": "npm run test:load && npm run test:stress && npm run test:spike && npm run test:soak && npm run test:volume && npm run test:scalability && npm run test:reliability",
+        "test:endurance": "k6 run tests/endurance.test.js",
+        "test:all": "npm run test:load && npm run test:stress && npm run test:spike && npm run test:soak && npm run test:volume && npm run test:scalability && npm run test:reliability && npm run test:endurance",
         "report:load": "k6 run --out json=reports/load.json         tests/load.test.js",
         "report:stress": "k6 run --out json=reports/stress.json       tests/stress.test.js",
         "report:spike": "k6 run --out json=reports/spike.json        tests/spike.test.js",
         "report:soak": "k6 run --out json=reports/soak.json         tests/soak.test.js",
         "report:volume": "k6 run --out json=reports/volume.json       tests/volume.test.js",
         "report:scalability": "k6 run --out json=reports/scalability.json  tests/scalability.test.js",
-        "report:reliability": "k6 run --out json=reports/reliability.json  tests/reliability.test.js"
+        "report:reliability": "k6 run --out json=reports/reliability.json  tests/reliability.test.js",
+        "report:endurance": "k6 run --out json=reports/endurance.json    tests/endurance.test.js"
     }
 }

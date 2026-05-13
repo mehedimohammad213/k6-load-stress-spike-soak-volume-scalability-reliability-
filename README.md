@@ -44,8 +44,8 @@ loadtest/
 │   ├── soak.test.js        # Long-duration stability (2 h)
 │   ├── volume.test.js      # Large data / payload handling
 │   ├── scalability.test.js # Linear growth handling
-│   └── reliability.test.js # Consistent uptime verification
-├── reports/                # JSON output directory
+│   ├── reliability.test.js # Consistent uptime verification
+│   └── endurance.test.js   # Very long duration (8 h)
 ├── package.json
 └── README.md
 ```
@@ -77,6 +77,9 @@ npm run test:scalability
 
 # Reliability Test — consistent uptime (32 min)
 npm run test:reliability
+
+# Endurance Test — very long duration stability (8 hours)
+npm run test:endurance
 ```
 
 ### Run All Tests Sequentially
@@ -92,6 +95,7 @@ Soak and Reliability tests support a `SHORT` env var for quick validation:
 ```bash
 k6 run -e SHORT=true tests/soak.test.js          # 5 min instead of 2 h
 k6 run -e SHORT=true tests/reliability.test.js    # 3 min instead of 30 min
+k6 run -e SHORT=true tests/endurance.test.js      # 5 min instead of 8 h
 ```
 
 ### Save Reports to JSON
@@ -104,6 +108,7 @@ npm run report:soak         # → reports/soak.json
 npm run report:volume       # → reports/volume.json
 npm run report:scalability  # → reports/scalability.json
 npm run report:reliability  # → reports/reliability.json
+npm run report:endurance    # → reports/endurance.json
 ```
 
 ---
@@ -129,6 +134,7 @@ k6 run -e AUTH_TOKEN=your_jwt_token tests/load.test.js
 | **Volume**      | Large data handling       | 10 (batch)  | ~4 min      |
 | **Scalability** | Growth handling           | 10 → 160    | ~14 min     |
 | **Reliability** | Consistent uptime         | 25 (steady) | ~32 min     |
+| **Endurance**   | Very long duration        | 20 (steady) | ~8 h 10 min |
 
 ---
 
