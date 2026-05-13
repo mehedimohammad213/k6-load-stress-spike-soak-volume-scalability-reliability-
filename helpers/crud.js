@@ -5,6 +5,11 @@ import http from 'k6/http';
 import { check, group } from 'k6';
 import { ENDPOINT, buildHeaders } from '../config/env.js';
 
+// Tell k6 that 200, 201, 204, and 404 are ALL "expected" statuses.
+// This prevents 404 (which is valid for GET/UPDATE/DELETE on a missing ID)
+// from inflating the http_req_failed metric.
+http.setResponseCallback(http.expectedStatuses(200, 201, 204, 404));
+
 // ── Payload factories ─────────────────────────────────────────────────────────
 
 let _counter = 0;
@@ -30,7 +35,10 @@ export function makePayload(prefix = 'test') {
 export function listTerms() {
     let res;
     group('LIST terms-conditions', () => {
-        res = http.get(ENDPOINT, { headers: buildHeaders() });
+        res = http.get(ENDPOINT, {
+            headers: buildHeaders(),
+            tags: { name: 'ListTerms' },   // URL grouping — avoids high-cardinality
+        });
         check(res, {
             'LIST: status 200': (r) => r.status === 200,
             'LIST: has data array': (r) => {
@@ -46,7 +54,10 @@ export function listTerms() {
 export function getTerm(id) {
     let res;
     group('GET term by id', () => {
-        res = http.get(`${ENDPOINT}/${id}`, { headers: buildHeaders() });
+        res = http.get(`${ENDPOINT}/${id}`, {
+            headers: buildHeaders(),
+            tags: { name: 'GetTermById' },
+        });
         check(res, {
             'GET: status 200 or 404': (r) => r.status === 200 || r.status === 404,
         });
@@ -61,7 +72,10 @@ export function createTerm(payload) {
         res = http.post(
             ENDPOINT,
             JSON.stringify(payload || makePayload('create')),
-            { headers: buildHeaders() }
+            {
+                headers: buildHeaders(),
+                tags: { name: 'CreateTerm' },
+            }
         );
         check(res, {
             'CREATE: status 201 or 200': (r) => r.status === 201 || r.status === 200,
@@ -83,7 +97,10 @@ export function updateTerm(id, payload) {
         res = http.put(
             `${ENDPOINT}/${id}`,
             JSON.stringify(payload || makePayload('update')),
-            { headers: buildHeaders() }
+            {
+                headers: buildHeaders(),
+                tags: { name: 'UpdateTerm' },
+            }
         );
         check(res, {
             'UPDATE: status 2xx or 404': (r) => r.status < 300 || r.status === 404,
@@ -99,7 +116,10 @@ export function deleteTerm(id) {
         res = http.del(
             `${ENDPOINT}/${id}`,
             null,
-            { headers: buildHeaders() }
+            {
+                headers: buildHeaders(),
+                tags: { name: 'DeleteTerm' },
+            }
         );
         check(res, {
             'DELETE: status 2xx or 404': (r) => r.status < 300 || r.status === 404,
